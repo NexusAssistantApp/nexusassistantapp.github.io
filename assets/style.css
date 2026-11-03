@@ -168,3 +168,25 @@ button.btn { cursor: pointer; font-family: inherit; }
 .chat-line.mine { align-self: flex-end; background: #12305A; }
 .chat-input { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); }
 .chat-input input { flex: 1; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: inherit; font-size: 14px; }
+
+/* forum and reviews */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.tab { background: var(--panel); color: var(--muted); border: 1px solid var(--line); border-radius: 10px; padding: 7px 14px; cursor: pointer; font: inherit; font-size: 14px; }
+.tab.on { color: var(--text); border-color: var(--accent); }
+.tabs .btn { margin-left: auto; }
+.topic { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin-bottom: 10px; color: var(--text); }
+.topic:hover { border-color: var(--accent); color: var(--text); }
+.topic span { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+.back { display: inline-block; margin-bottom: 14px; font-size: 14px; }
+.topic-title { font-size: 24px; margin-bottom: 14px; }
+.post { margin-bottom: 10px; padding: 16px 20px; }
+.post p, .review p { color: var(--text); white-space: pre-wrap; margin-top: 6px; }
+.post.creator { border-color: var(--accent); }
+.who { color: var(--muted); font-size: 13px; }
+.form { display: grid; gap: 10px; margin-top: 16px; max-width: 640px; }
+.form input, .form select, .form textarea { background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 14px; }
+.form textarea { min-height: 110px; resize: vertical; }
+.form .btn { justify-self: start; }
+.form-note { color: var(--muted); font-size: 13px; }
+.stars { color: #F5C451; letter-spacing: 2px; }
+.review-form { margin-top: 18px; }
