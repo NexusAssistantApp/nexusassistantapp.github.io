@@ -34,12 +34,21 @@
     var plans = (d.products || []).filter(function (p) { return short[p.id]; });
     if (!plans.length) return;
     list.innerHTML = "";
+    var sale = document.getElementById("plans-sale");
+    if (sale) { sale.textContent = d.sale || ""; sale.hidden = !d.sale; }
     plans.forEach(function (p) {
       var c = document.createElement("div");
       c.className = "card plan";
-      c.innerHTML = '<div class="name"></div><div class="price"></div>';
+      c.innerHTML = '<div class="name"></div><div class="price"><s class="old"></s><span></span></div>';
       c.querySelector(".name").textContent = short[p.id];
-      c.querySelector(".price").textContent = p.price + " ₽";
+      c.querySelector(".price span").textContent = p.price + " ₽";
+      if (p.old) {
+        c.querySelector(".old").textContent = p.old + " ₽";
+        var off = document.createElement("span");
+        off.className = "badge";
+        off.textContent = "−" + Math.round(100 - p.price * 100 / p.old) + "%";
+        c.insertBefore(off, c.firstChild);
+      }
       var b = document.createElement("button");
       b.className = d.ready ? "btn" : "btn ghost soon";
       b.textContent = d.ready ? "Купить" : "Скоро";
