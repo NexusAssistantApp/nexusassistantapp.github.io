@@ -92,6 +92,7 @@ window.nexusGoogleInit = function () {
     function render() {
       window.nexusGoogleInit();
       area.querySelector(".gbutton") || area.appendChild(Object.assign(document.createElement("div"), { className: "gbutton" }));
+      area.querySelector(".gbutton").innerHTML = "";          // one button, however often it is drawn
       window.google.accounts.id.renderButton(area.querySelector(".gbutton"),
         { theme: "filled_black", size: "large", text: "signin_with", locale: "ru" });
     }
