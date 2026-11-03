@@ -56,6 +56,8 @@
             client_id: google,
             callback: function (answer) {
               token = answer.credential;
+              window.NEXUS_TOKEN = token;                    // the shop (shop.js) uses the same sign-in
+              document.dispatchEvent(new Event("nexus-google"));
               var name = "";
               try {
                 var part = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -67,6 +69,7 @@
             }
           });
           window.google.accounts.id.renderButton(holder, { theme: "filled_black", size: "large", text: "signin_with", locale: "ru" });
+          document.dispatchEvent(new Event("nexus-google-ready"));
         };
         document.head.appendChild(script);
       }
