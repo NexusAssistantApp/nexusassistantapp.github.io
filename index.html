@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEXUS</title>
 <link rel="icon" href="assets/logo.svg">
-<link rel="stylesheet" href="assets/style.css?v=8">
+<link rel="stylesheet" href="assets/style.css?v=9">
 </head>
 <body>
 <header>
@@ -80,7 +80,7 @@
       <div id="review-signin" class="review-signin"></div>
       <form id="review-form" class="card form review-form" hidden>
         <div class="who" id="review-who"></div>
-        <select name="stars"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select>
+        <div class="rate"><input type="radio" id="star5" name="stars" value="5" required><label for="star5" title="5">★</label><input type="radio" id="star4" name="stars" value="4"><label for="star4" title="4">★</label><input type="radio" id="star3" name="stars" value="3"><label for="star3" title="3">★</label><input type="radio" id="star2" name="stars" value="2"><label for="star2" title="2">★</label><input type="radio" id="star1" name="stars" value="1"><label for="star1" title="1">★</label></div>
         <textarea name="text" placeholder="Отзыв" maxlength="1000" required></textarea>
         <button class="btn" type="submit">Отправить</button>
         <div class="form-note"></div>
@@ -109,7 +109,7 @@
 </footer>
 <button class="chat-open" data-chat aria-label="Чат"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Чат</span></button>
 <script>window.NEXUS_CHAT = "https://193-232-89-90.sslip.io:8443"; window.NEXUS_GOOGLE = "959547743443-be8pcmqgt4temf61vtt6gkfed54fnpoh.apps.googleusercontent.com";</script>
-<script src="assets/chat.js?v=8"></script>
-<script src="assets/community.js?v=8"></script>
+<script src="assets/chat.js?v=9"></script>
+<script src="assets/community.js?v=9"></script>
 </body>
 </html>

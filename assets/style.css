@@ -218,3 +218,11 @@ button.btn { cursor: pointer; font-family: inherit; }
 .review-signin { margin-top: 18px; }
 @media (max-width: 900px) { .downloads, .flow { grid-template-columns: 1fr; } .contact .cta { margin-left: 0; } }
 [hidden] { display: none !important; }
+
+/* star rating: click a star; the ones before it light up */
+.rate { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+.rate input { position: absolute; opacity: 0; width: 0; height: 0; }
+.rate label { font-size: 34px; line-height: 1; color: #2A3550; cursor: pointer; transition: color .12s, transform .12s; }
+.rate label:hover, .rate label:hover ~ label, .rate input:checked ~ label { color: #F5C451; }
+.rate label:hover { transform: scale(1.12); }
+.rate input:focus-visible + label { outline: 2px solid var(--accent); border-radius: 4px; }
