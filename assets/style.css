@@ -190,3 +190,30 @@ button.btn { cursor: pointer; font-family: inherit; }
 .form-note { color: var(--muted); font-size: 13px; }
 .stars { color: #F5C451; letter-spacing: 2px; }
 .review-form { margin-top: 18px; }
+
+/* icons, downloads, flow, contact */
+.ico { width: 22px; height: 22px; flex: none; }
+.icon { color: var(--accent2); }
+.btn .ico { width: 18px; height: 18px; }
+.chat-open { display: flex; align-items: center; gap: 8px; }
+.chat-open .ico { width: 20px; height: 20px; }
+.downloads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.dl { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.dl h3 { margin: 12px 0 0; font-size: 20px; }
+.dl p { color: var(--muted); margin-bottom: 14px; }
+.dl .btn { margin-top: auto; }
+.soon { color: var(--muted); cursor: default; }
+.flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: none; }
+.flow-step { position: relative; background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+.flow-step span { display: inline-flex; width: 32px; height: 32px; border-radius: 50%; align-items: center; justify-content: center; background: rgba(30,136,255,.15); color: var(--accent2); font-weight: 700; }
+.flow-step b { display: block; margin: 14px 0 6px; font-size: 18px; }
+.flow-step p { color: var(--muted); font-size: 15px; }
+.contact { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; background: linear-gradient(135deg, rgba(30,136,255,.14), transparent 60%); border: 1px solid var(--line); border-radius: 24px; padding: 36px; }
+.contact .cta { margin: 0 0 0 auto; }
+.contact .sub { margin: 0; }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px; }
+.toc a { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; font-size: 14px; color: var(--text); }
+.mod-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.mod-foot .price-tag { margin: 0; }
+.review-signin { margin-top: 18px; }
+@media (max-width: 900px) { .downloads, .flow { grid-template-columns: 1fr; } .contact .cta { margin-left: 0; } }

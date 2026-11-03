@@ -38,11 +38,41 @@
       });
     }).catch(function () {});
     var form = document.getElementById("review-form");
-    if (form) {
-      rememberName(form.name);
+    var signin = document.getElementById("review-signin");
+    var token = "";
+    if (form && signin) {
+      var google = window.NEXUS_GOOGLE || "";
+      if (!google) {
+        signin.appendChild(el("div", "who", "Оставить отзыв можно будет скоро."));
+      } else {
+        signin.appendChild(el("div", "who", "Чтобы оставить отзыв, войди через Google."));
+        var holder = el("div", "gbutton");
+        signin.appendChild(holder);
+        var script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.onload = function () {
+          window.google.accounts.id.initialize({
+            client_id: google,
+            callback: function (answer) {
+              token = answer.credential;
+              var name = "";
+              try {
+                var part = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+                name = JSON.parse(decodeURIComponent(escape(atob(part)))).given_name || "";
+              } catch (e) {}
+              document.getElementById("review-who").textContent = "Отзыв от: " + (name || "тебя");
+              signin.hidden = true;
+              form.hidden = false;
+            }
+          });
+          window.google.accounts.id.renderButton(holder, { theme: "filled_black", size: "large", text: "signin_with", locale: "ru" });
+        };
+        document.head.appendChild(script);
+      }
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        post("/reviews/new", { name: form.name.value, stars: form.stars.value, text: form.text.value }).then(function (d) {
+        post("/reviews/new", { id_token: token, stars: form.stars.value, text: form.text.value }).then(function (d) {
           form.querySelector(".form-note").textContent = d.ok ? "Спасибо! Отзыв появится после проверки." : (d.error || "Не отправилось.");
           if (d.ok) form.text.value = "";
         });

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Инструкция — NEXUS</title>
 <link rel="icon" href="assets/logo.svg">
-<link rel="stylesheet" href="assets/style.css?v=5">
+<link rel="stylesheet" href="assets/style.css?v=6">
 </head>
 <body>
 <header>
@@ -13,27 +13,30 @@
     <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""><div>NEXUS<small>LOCAL SYSTEM</small></div></a>
     <nav>
       <a href="index.html">Главная</a>
+      <a href="download.html">Скачать</a>
       <a href="guide.html" class="on">Инструкция</a>
-      <a href="settings.html">Настройки</a>
-      <a href="tips.html">Советы</a>
       <a href="mods.html">Модификации</a>
       <a href="forum.html">Форум</a>
     </nav>
-    <a class="btn small" href="index.html#download">Скачать</a>
+    <a class="btn small" href="download.html">Скачать</a>
   </div>
 </header>
 <main>
   <article class="doc">
     <h1>Инструкция</h1>
+    <div class="toc">
+      <a href="#install">Установка</a><a href="#commands">Команды</a><a href="#phone">Телефон</a>
+      <a href="#settings">Настройки</a><a href="#tips">Советы</a><a href="#subscription">Подписка</a>
+    </div>
 
-    <h2>Установка</h2>
+    <h2 id="install">Установка</h2>
     <ol>
       <li>Скачай NEXUS и запусти.</li>
       <li>Первый запуск дольше обычного: докачиваются голос и нейросеть.</li>
       <li>Войди через Google или по почте.</li>
     </ol>
 
-    <h2>Первые команды</h2>
+    <h2 id="commands">Первые команды</h2>
     <ul>
       <li>«Нексус, открой браузер»</li>
       <li>«Какая погода»</li>
@@ -41,18 +44,34 @@
       <li>«Тише», «громче»</li>
     </ul>
 
-    <h2>iPhone</h2>
+    <h2 id="phone">Телефон</h2>
     <ol>
       <li>На компьютере: Настройки → Устройства → «Показать QR-код».</li>
-      <li>Наведи камеру iPhone на код.</li>
+      <li>Наведи камеру телефона на код.</li>
       <li>Скажи «перенесись на телефон».</li>
     </ol>
 
-    <h2>Подписка</h2>
-    <p>Профиль внизу слева → «Аккаунт и подписка» → код → «Активировать».</p>
+    <h2 id="settings">Настройки</h2>
+    <ul>
+      <li><b>Голос</b> — голос, скорость речи, микрофон, динамик, тихий режим.</li>
+      <li><b>Нейросеть</b> — DeepSeek, ChatGPT или своя на компьютере (Ollama); ответы коротко, обычно или подробно.</li>
+      <li><b>Устройства</b> — телефон, общий чат с телефоном, цвет глаз, пауза в разговоре.</li>
+      <li><b>Память</b> — что NEXUS помнит о тебе: посмотреть и удалить.</li>
+    </ul>
 
-    <h2>Обновления</h2>
-    <p>Приходят сами, NEXUS спросит перед установкой.</p>
+    <h2 id="tips">Советы</h2>
+    <ul>
+      <li>Говори обычными словами, команды учить не надо.</li>
+      <li>Одно касание экрана телефона — NEXUS слушает, пока не коснёшься снова.</li>
+      <li>«Перекинь на компьютер» в чате телефона — файл окажется на рабочем столе.</li>
+      <li>Наведи камеру и спроси «сколько это стоит» или «как это настроить».</li>
+      <li>«Новый чат» не удаляет старый, он есть в «Истории».</li>
+      <li>Ночью NEXUS засыпает. Выключается в настройках телефона.</li>
+    </ul>
+
+    <h2 id="subscription">Подписка и обновления</h2>
+    <p>Профиль внизу слева → «Аккаунт и подписка» → код → «Активировать».</p>
+    <p>Обновления приходят сами, NEXUS спросит перед установкой.</p>
   </article>
 </main>
 <footer>
@@ -61,9 +80,9 @@
     <div class="links"><a href="privacy.html">Конфиденциальность</a><a href="mailto:NexusAasistant@gmail.com">NexusAasistant@gmail.com</a></div>
   </div>
 </footer>
-<button class="chat-open" data-chat aria-label="Чат">Чат</button>
-<script>window.NEXUS_CHAT = "https://193-232-89-90.sslip.io:8443";</script>
-<script src="assets/chat.js?v=5"></script>
-<script src="assets/community.js?v=5"></script>
+<button class="chat-open" data-chat aria-label="Чат"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Чат</span></button>
+<script>window.NEXUS_CHAT = "https://193-232-89-90.sslip.io:8443"; window.NEXUS_GOOGLE = "";</script>
+<script src="assets/chat.js?v=6"></script>
+<script src="assets/community.js?v=6"></script>
 </body>
 </html>

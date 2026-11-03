@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Модификации — NEXUS</title>
 <link rel="icon" href="assets/logo.svg">
-<link rel="stylesheet" href="assets/style.css?v=5">
+<link rel="stylesheet" href="assets/style.css?v=6">
 </head>
 <body>
 <header>
@@ -13,13 +13,12 @@
     <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""><div>NEXUS<small>LOCAL SYSTEM</small></div></a>
     <nav>
       <a href="index.html">Главная</a>
+      <a href="download.html">Скачать</a>
       <a href="guide.html">Инструкция</a>
-      <a href="settings.html">Настройки</a>
-      <a href="tips.html">Советы</a>
       <a href="mods.html" class="on">Модификации</a>
       <a href="forum.html">Форум</a>
     </nav>
-    <a class="btn small" href="index.html#download">Скачать</a>
+    <a class="btn small" href="download.html">Скачать</a>
   </div>
 </header>
 <main>
@@ -28,7 +27,12 @@
       <h2>Модификации</h2>
       <p class="sub">Ставятся в NEXUS, раздел «Модификации».</p>
       <div class="grid">
-        <div class="card"><h3>Монетка и кубик</h3><p>Орёл или решка, кубик 1–6.</p><span class="price-tag">Бесплатно</span></div>
+        <div class="card mod">
+          <div class="icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10.5h5"/></svg></div>
+          <h3>Монетка и кубик</h3>
+          <p>Орёл или решка, кубик 1–6.</p>
+          <div class="mod-foot"><span class="price-tag">Бесплатно</span><span class="who">v1.0.0</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -39,9 +43,9 @@
     <div class="links"><a href="privacy.html">Конфиденциальность</a><a href="mailto:NexusAasistant@gmail.com">NexusAasistant@gmail.com</a></div>
   </div>
 </footer>
-<button class="chat-open" data-chat aria-label="Чат">Чат</button>
-<script>window.NEXUS_CHAT = "https://193-232-89-90.sslip.io:8443";</script>
-<script src="assets/chat.js?v=5"></script>
-<script src="assets/community.js?v=5"></script>
+<button class="chat-open" data-chat aria-label="Чат"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Чат</span></button>
+<script>window.NEXUS_CHAT = "https://193-232-89-90.sslip.io:8443"; window.NEXUS_GOOGLE = "";</script>
+<script src="assets/chat.js?v=6"></script>
+<script src="assets/community.js?v=6"></script>
 </body>
 </html>
