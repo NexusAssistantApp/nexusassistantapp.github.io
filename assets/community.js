@@ -52,21 +52,17 @@
         script.src = "https://accounts.google.com/gsi/client";
         script.async = true;
         script.onload = function () {
-          window.google.accounts.id.initialize({
-            client_id: google,
-            callback: function (answer) {
-              token = answer.credential;
-              window.NEXUS_TOKEN = token;                    // the shop (shop.js) uses the same sign-in
-              document.dispatchEvent(new Event("nexus-google"));
-              var name = "";
-              try {
-                var part = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-                name = JSON.parse(decodeURIComponent(escape(atob(part)))).given_name || "";
-              } catch (e) {}
-              document.getElementById("review-who").textContent = "Отзыв от: " + (name || "тебя");
-              signin.hidden = true;
-              form.hidden = false;
-            }
+          window.nexusGoogleInit();
+          document.addEventListener("nexus-google", function () {
+            token = window.NEXUS_TOKEN;
+            var name = "";
+            try {
+              var part = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+              name = JSON.parse(decodeURIComponent(escape(atob(part)))).given_name || "";
+            } catch (e) {}
+            document.getElementById("review-who").textContent = "Отзыв от: " + (name || "тебя");
+            signin.hidden = true;
+            form.hidden = false;
           });
           window.google.accounts.id.renderButton(holder, { theme: "filled_black", size: "large", text: "signin_with", locale: "ru" });
           document.dispatchEvent(new Event("nexus-google-ready"));

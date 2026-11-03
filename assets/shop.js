@@ -10,6 +10,7 @@
     if (!window.NEXUS_TOKEN) {
       wanted = product;
       signin.hidden = false;
+      if (window.nexusGoogleInit) window.nexusGoogleInit();
       if (window.google && window.google.accounts) {
         window.google.accounts.id.renderButton(signin.querySelector(".gbutton"),
           { theme: "filled_black", size: "large", text: "signin_with", locale: "ru" });
