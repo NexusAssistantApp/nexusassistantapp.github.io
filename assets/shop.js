@@ -6,6 +6,35 @@
   var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "";
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
 
+  // «Купить»: where to write about it — Telegram or the chat right here (with the text ready); the card,
+  // when the payment service is on.
+  function choose(p, ready) {
+    var old = document.getElementById("buy-choice");
+    if (old) old.remove();
+    var text = "Хочу купить подписку NEXUS: " + short[p.id] + " — " + p.price + " ₽";
+    var box = document.createElement("div");
+    box.id = "buy-choice";
+    box.className = "buy-choice";
+    box.innerHTML = '<div class="card"><b>Как удобнее?</b><p class="who">Напишите — я пришлю, как оплатить.</p>' +
+      '<div class="cta"></div><button class="chat-x" aria-label="Закрыть">×</button></div>';
+    var row = box.querySelector(".cta");
+    function add(label, cls, fn) {
+      var b = document.createElement(fn ? "button" : "a");
+      b.className = cls; b.textContent = label;
+      if (fn) b.onclick = function () { box.remove(); fn(); };
+      row.appendChild(b);
+      return b;
+    }
+    if (ready) add("Оплатить картой", "btn", function () { buy(p.id); });
+    var tg = add("Написать в Telegram", ready ? "btn ghost" : "btn");
+    tg.href = (window.NEXUS_TELEGRAM || "https://t.me/NexusAppAiBot") + "?start=buy_" + p.id;
+    tg.target = "_blank"; tg.rel = "noopener";
+    add("Написать здесь, на сайте", "btn ghost", function () { window.nexusOpenChat && window.nexusOpenChat(text); });
+    box.querySelector(".chat-x").onclick = function () { box.remove(); };
+    box.onclick = function (e) { if (e.target === box) box.remove(); };
+    document.body.appendChild(box);
+  }
+
   function buy(product) {
     if (!window.NEXUS_TOKEN) {
       wanted = product;
@@ -51,10 +80,9 @@
         c.insertBefore(off, c.firstChild);
       }
       var b = document.createElement("button");
-      b.className = d.ready ? "btn" : "btn ghost soon";
-      b.textContent = d.ready ? "Купить" : "Скоро";
-      b.disabled = !d.ready;
-      b.onclick = function () { buy(p.id); };
+      b.className = "btn";
+      b.textContent = "Купить";
+      b.onclick = function () { choose(p, d.ready); };
       c.appendChild(b);
       list.appendChild(c);
     });

@@ -123,7 +123,7 @@ window.nexusGoogleInit = function () {
       input.addEventListener("keydown", function (e) { if (e.key === "Enter") send(); });
       list.addEventListener("dragover", function (e) { e.preventDefault(); });
       list.addEventListener("drop", function (e) { e.preventDefault(); sendPhoto(e.dataTransfer.files[0]); });
-      line({ from: "nexus", text: "Привет! Напиши вопрос — отвечу здесь." });
+      line({ from: "nexus", text: "Здравствуйте! 👋 Напишите вопрос или пришлите фото — мы ответим и поможем. Хотите оплатить? Напишите, что именно хотите купить, — отвечу, как только освобожусь." });
     }
     box.classList.add("on");
     if (!key) showSignin(); else { input.focus(); poll(); }
@@ -144,10 +144,16 @@ window.nexusGoogleInit = function () {
         remember(d.key);
         area.hidden = true;
         box.querySelector(".chat-input").hidden = false;
-        note("Привет, " + d.name + "! Напиши вопрос или пришли фото.");
+        note(d.name + ", вы вошли. Пишите — отвечу здесь.");
         poll();
       });
   });
+
+  // From «Купить»: the chat opens with the text already in the field — not sent, the person can change it.
+  window.nexusOpenChat = function (text) {
+    open();
+    if (text) { input.value = text; if (key) input.focus(); }
+  };
 
   document.addEventListener("click", function (e) {
     if (e.target.closest && e.target.closest("[data-chat]")) open();
