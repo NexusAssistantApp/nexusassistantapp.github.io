@@ -21,6 +21,7 @@
   function remember(k) {
     key = k;
     try { k ? sessionStorage.setItem("nexus-panel-key", k) : sessionStorage.removeItem("nexus-panel-key"); } catch (e) {}
+    if (!k && window.nexusPanelForget) window.nexusPanelForget();        // «Панель» уходит из меню
   }
   function ask(what, extra) {
     return post("/panel/do", Object.assign({ key: key, what: what }, extra || {})).then(function (d) {
@@ -40,6 +41,7 @@
 
   // ------------------------------------------------------------------ вход
   function signin() {
+    if (window.nexusPanelForget) window.nexusPanelForget();   // вход кончился — убрать «Панель» из меню
     clear(root);
     var card = el("div", "card");
     card.appendChild(el("h3", null, "Вход в панель"));

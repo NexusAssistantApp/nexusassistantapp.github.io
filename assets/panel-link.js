@@ -45,5 +45,13 @@
       if (window.NEXUS_TOKEN) check(window.NEXUS_TOKEN).catch(function () {});
     });
   }
+  function hide() {
+    remember(false);
+    shown = false;
+    var link = document.querySelector("header nav .panel-link");
+    if (link) link.remove();
+  }
+
   window.nexusPanelCheck = check;
+  window.nexusPanelForget = hide;
 })();
