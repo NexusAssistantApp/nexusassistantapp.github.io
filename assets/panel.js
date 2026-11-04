@@ -70,6 +70,7 @@
     post("/panel/login", { id_token: window.NEXUS_TOKEN }).then(function (d) {
       if (!d.ok) { fail(root, d.error || "Не вышло войти."); return setTimeout(signin, 2500); }
       remember(d.key);
+      try { localStorage.setItem("nexus-creator", "1"); } catch (e) {}   // «Панель» в меню и дальше
       shell(d.name);
     }).catch(function () { fail(root, "Нет связи с сервером."); });
   }

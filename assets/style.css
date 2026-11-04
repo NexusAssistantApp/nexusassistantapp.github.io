@@ -330,3 +330,7 @@ button.btn { cursor: pointer; font-family: inherit; }
 
 /* тариф: что входит */
 .features { color: var(--muted); font-size: 13px; margin: 8px 0 14px; line-height: 1.4; }
+
+/* «Панель» в меню — её дописывает panel-link.js, только у создателя */
+header nav .panel-link { color: var(--accent2); }
+header nav .panel-link::before { content: "★"; margin-right: 5px; font-size: 11px; }
