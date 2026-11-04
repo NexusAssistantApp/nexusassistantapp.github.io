@@ -88,3 +88,23 @@
     });
   }).catch(function () {});
 })();
+
+// Страница «Скачать»: ссылки берутся с сервера — что выложено в панели, то и можно скачать.
+(function () {
+  var api = window.NEXUS_CHAT || "";
+  var cards = document.querySelectorAll("[data-dl]");
+  if (!api || !cards.length) return;
+  fetch(api + "/downloads").then(function (r) { return r.json(); }).then(function (d) {
+    Array.prototype.forEach.call(cards, function (card) {
+      var item = (d.releases || {})[card.getAttribute("data-dl")];
+      var slot = card.querySelector(".soon") || card.querySelector(".btn");
+      if (!item || !slot) return;
+      var a = document.createElement("a");
+      a.className = "btn";
+      a.href = api + "/dl/" + card.getAttribute("data-dl");
+      a.innerHTML = slot.innerHTML.indexOf("svg") >= 0 ? slot.innerHTML : "Скачать";
+      a.appendChild(document.createTextNode(" " + item.version));
+      slot.parentNode.replaceChild(a, slot);
+    });
+  }).catch(function () {});
+})();

@@ -286,3 +286,44 @@ button.btn { cursor: pointer; font-family: inherit; }
 .buy-choice .cta { flex-direction: column; margin-top: 18px; }
 .buy-choice .cta .btn { justify-content: center; }
 .buy-choice .chat-x { position: absolute; top: 10px; right: 14px; }
+
+/* ---------------------------------------------------------------- админ-панель */
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.panel-who { font-weight: 700; }
+.panel-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.panel-tab { background: var(--panel); color: var(--muted); border: 1px solid var(--line); border-radius: 12px;
+             padding: 9px 16px; font: inherit; font-size: 14px; cursor: pointer; }
+.panel-tab:hover { color: var(--text); border-color: var(--accent); }
+.panel-tab.on { background: var(--accent); border-color: var(--accent); color: #04101F; font-weight: 700; }
+.panel-body { display: grid; gap: 18px; }
+.panel-card { display: grid; gap: 12px; }
+.panel-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+              padding: 10px 0; border-top: 1px solid var(--line); }
+.panel-line:first-child { border-top: none; }
+.panel-line b { min-width: 170px; }
+.field { display: grid; gap: 6px; }
+.field label { color: var(--muted); font-size: 13px; }
+#panel input[type=text], #panel textarea, #panel select {
+  background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px; font: inherit; font-size: 15px; width: 100%; }
+#panel input[type=text]:focus, #panel textarea:focus { outline: none; border-color: var(--accent); }
+#panel input[type=file] { color: var(--muted); font-size: 14px; }
+#panel textarea { resize: vertical; }
+#panel .panel-line input[type=text] { width: auto; flex: 1 1 160px; }
+.note.good { color: var(--green); }
+.note.bad { color: #FF8A95; }
+.bar { height: 6px; background: var(--panel2); border-radius: 99px; overflow: hidden; display: none; }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+.mod-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.mod-info { color: var(--muted); font-size: 14px; }
+.mod-form { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+.mod-form .field:last-child { grid-column: 1 / -1; }
+.mod-row { display: grid; gap: 10px; }
+.chat-thread { display: grid; gap: 8px; }
+.codes { background: var(--panel2); border-radius: 10px; padding: 12px; color: var(--accent2);
+         font: 14px/1.7 ui-monospace, Consolas, monospace; white-space: pre-wrap; }
+.gbtn { min-height: 44px; }
+@media (max-width: 720px) {
+  .mod-form { grid-template-columns: 1fr; }
+  .panel-line b { min-width: 0; }
+}
