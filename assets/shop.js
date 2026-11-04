@@ -69,7 +69,8 @@
     plans.forEach(function (p) {
       var c = document.createElement("div");
       c.className = "card plan";
-      c.innerHTML = '<div class="name"></div><div class="price"><s class="old"></s><span></span></div>';
+      c.innerHTML = '<div class="name"></div><div class="price"><s class="old"></s><span></span></div>'
+        + '<div class="features">Весь NEXUS · ПК и телефон · Облако</div>';
       c.querySelector(".name").textContent = short[p.id];
       c.querySelector(".price span").textContent = p.price + " ₽";
       if (p.old) {

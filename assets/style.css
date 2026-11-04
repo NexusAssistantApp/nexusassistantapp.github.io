@@ -327,3 +327,6 @@ button.btn { cursor: pointer; font-family: inherit; }
   .mod-form { grid-template-columns: 1fr; }
   .panel-line b { min-width: 0; }
 }
+
+/* тариф: что входит */
+.features { color: var(--muted); font-size: 13px; margin: 8px 0 14px; line-height: 1.4; }
