@@ -6,30 +6,27 @@
   var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "";
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
 
-  // «Купить»: where to write about it — Telegram or the chat right here (with the text ready); the card,
-  // when the payment service is on.
+  // «Купить»: the plan, its price and «Оплатить». Until the payment service is on, the button still works
+  // and says that paying is not available yet.
   function choose(p, ready) {
     var old = document.getElementById("buy-choice");
     if (old) old.remove();
-    var text = "Хочу купить подписку NEXUS: " + short[p.id] + " — " + p.price + " ₽";
     var box = document.createElement("div");
     box.id = "buy-choice";
     box.className = "buy-choice";
-    box.innerHTML = '<div class="card"><b>Как удобнее?</b><p class="who">Напишите — я пришлю, как оплатить.</p>' +
-      '<div class="cta"></div><button class="chat-x" aria-label="Закрыть">×</button></div>';
-    var row = box.querySelector(".cta");
-    function add(label, cls, fn) {
-      var b = document.createElement(fn ? "button" : "a");
-      b.className = cls; b.textContent = label;
-      if (fn) b.onclick = function () { box.remove(); fn(); };
-      row.appendChild(b);
-      return b;
-    }
-    if (ready) add("Оплатить картой", "btn", function () { buy(p.id); });
-    var tg = add("Написать в Telegram", ready ? "btn ghost" : "btn");
-    tg.href = (window.NEXUS_TELEGRAM || "https://t.me/NexusAppAiBot") + "?start=buy_" + p.id;
-    tg.target = "_blank"; tg.rel = "noopener";
-    add("Написать здесь, на сайте", "btn ghost", function () { window.nexusOpenChat && window.nexusOpenChat(text); });
+    box.innerHTML = '<div class="card"><button class="chat-x" aria-label="Закрыть">×</button>' +
+      '<div class="who">Подписка NEXUS</div><b class="plan-name"></b>' +
+      '<div class="price"><s class="old"></s><span></span></div>' +
+      '<div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
+    box.querySelector(".plan-name").textContent = short[p.id];
+    box.querySelector(".price span").textContent = p.price + " ₽";
+    if (p.old) box.querySelector(".old").textContent = p.old + " ₽";
+    var msg = box.querySelector(".form-note");
+    box.querySelector(".pay").onclick = function () {
+      if (!ready) { msg.textContent = "Оплата пока недоступна — скоро заработает."; return; }
+      box.remove();
+      buy(p.id);
+    };
     box.querySelector(".chat-x").onclick = function () { box.remove(); };
     box.onclick = function (e) { if (e.target === box) box.remove(); };
     document.body.appendChild(box);
