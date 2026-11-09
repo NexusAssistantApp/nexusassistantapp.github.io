@@ -2,7 +2,8 @@
 // the server makes the order and sends to the payment page; after the payment the plan is on that account.
 (function () {
   var api = window.NEXUS_CHAT || "", list = document.getElementById("plans-list");
-  if (!api || !list) return;
+  var modList = document.getElementById("mods-list");             // the «Модификации» page: paid mods
+  if (!api || (!list && !modList)) return;
   var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "";
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
 
@@ -15,10 +16,11 @@
     box.id = "buy-choice";
     box.className = "buy-choice";
     box.innerHTML = '<div class="card"><button class="chat-x" aria-label="Закрыть">×</button>' +
-      '<div class="who">Подписка NEXUS</div><b class="plan-name"></b>' +
+      '<div class="who"></div><b class="plan-name"></b>' +
       '<div class="price"><s class="old"></s><span></span></div>' +
       '<div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
-    box.querySelector(".plan-name").textContent = short[p.id];
+    box.querySelector(".who").textContent = short[p.id] ? "Подписка NEXUS" : "Модификация";
+    box.querySelector(".plan-name").textContent = short[p.id] || p.name;
     box.querySelector(".price span").textContent = p.price + " ₽";
     if (p.old) box.querySelector(".old").textContent = p.old + " ₽";
     var msg = box.querySelector(".form-note");
@@ -58,8 +60,9 @@
   });
 
   fetch(api + "/pay/prices").then(function (r) { return r.json(); }).then(function (d) {
+    if (modList) showMods(d);
     var plans = (d.products || []).filter(function (p) { return short[p.id]; });
-    if (!plans.length) return;
+    if (!list || !plans.length) return;
     list.innerHTML = "";
     var sale = document.getElementById("plans-sale");
     if (sale) { sale.textContent = d.sale || ""; sale.hidden = !d.sale; }
@@ -85,6 +88,24 @@
       list.appendChild(c);
     });
   }).catch(function () {});
+
+  // Paid mods: bought here, they land on the Google account and NEXUS puts them in by itself.
+  function showMods(d) {
+    (d.products || []).forEach(function (p) {
+      if (p.id.indexOf("mod:") !== 0) return;
+      var c = document.createElement("div");
+      c.className = "card mod";
+      c.innerHTML = '<h3></h3><p>Поставится в NEXUS сама.</p><div class="mod-foot"><span class="price-tag"></span></div>';
+      c.querySelector("h3").textContent = p.name;
+      c.querySelector(".price-tag").textContent = p.price + " ₽";
+      var b = document.createElement("button");
+      b.className = "btn";
+      b.textContent = "Купить";
+      b.onclick = function () { choose(p, d.ready); };
+      c.querySelector(".mod-foot").appendChild(b);
+      modList.appendChild(c);
+    });
+  }
 })();
 
 // Страница «Скачать»: ссылки берутся с сервера — что выложено в панели, то и можно скачать.
