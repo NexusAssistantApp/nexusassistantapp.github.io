@@ -4,6 +4,23 @@
   if (!P) return;
   var el = P.el, clear = P.clear, ask = P.ask, fail = P.fail, human = P.human;
 
+  // Где работает модификация: не каждая подходит и ПК, и телефону.
+  var PLACES = [["both", "ПК и телефон"], ["pc", "Только ПК"], ["phone", "Только телефон"]];
+  function placePicker(value) {
+    var s = el("select", "input");
+    PLACES.forEach(function (p) {
+      var o = el("option", null, p[1]);
+      o.value = p[0];
+      if (p[0] === (value || "both")) o.selected = true;
+      s.appendChild(o);
+    });
+    return s;
+  }
+  function placeName(value) {
+    var p = PLACES.filter(function (x) { return x[0] === (value || "both"); })[0];
+    return p ? p[1] : PLACES[0][1];
+  }
+
   function modCard(onReady) {
     var c = P.card("Новая модификация");
     var file = P.picker(".zip");
@@ -11,7 +28,7 @@
     var info = el("div", "mod-info");
     c.appendChild(info);
     var name = P.input("Название"), version = P.input("1.0"), price = P.input("Цена, ₽ (0 — бесплатно)", "0"),
-        desc = P.area("Описание");
+        desc = P.area("Описание"), place = placePicker("both");
     var read = function () {
       if (!file.files[0]) return;
       info.textContent = "Читаю пакет…";
@@ -26,6 +43,7 @@
     rows.appendChild(P.row("Название", name));
     rows.appendChild(P.row("Версия", version));
     rows.appendChild(P.row("Цена, ₽", price));
+    rows.appendChild(P.row("Где работает", place));
     rows.appendChild(P.row("Описание", desc));
     c.appendChild(rows);
     var note = el("p", "note");
@@ -34,7 +52,8 @@
     c.appendChild(go);
     go.onclick = function () {
       var card = { id: "", name: name.value.trim(), version: version.value.trim(),
-                   description: desc.value.trim(), price: Math.max(0, parseInt(price.value, 10) || 0) };
+                   description: desc.value.trim(), price: Math.max(0, parseInt(price.value, 10) || 0),
+                   works_on: place.value };
       go.disabled = true;
       P.say(note, "Подписываю…");
       // id, sha256 и размер приходят с сервера — карточка подписывается на уже загруженный файл
@@ -64,7 +83,8 @@
     var c = el("div", "card mod-row");
     var head = el("div", "mod-head");
     head.appendChild(el("b", null, mod.name + " "));
-    head.appendChild(el("span", "note", mod.id + " · " + mod.version + " · " + human(mod.size)));
+    head.appendChild(el("span", "note", mod.id + " · " + mod.version + " · " + human(mod.size) + " · " +
+                                         placeName(mod.works_on)));
     var price = el("span", "price-tag", mod.price ? mod.price + " ₽" : "бесплатно");
     head.appendChild(price);
     c.appendChild(head);
@@ -74,6 +94,9 @@
     var priceIn = P.input("Цена, ₽", String(mod.price || 0));
     priceIn.style.maxWidth = "140px";
     row.appendChild(priceIn);
+    var placeIn = placePicker(mod.works_on);
+    placeIn.style.maxWidth = "180px";
+    row.appendChild(placeIn);
     var save = el("button", "btn small", "Сохранить");
     var del = el("button", "btn ghost small", "Удалить");
     row.appendChild(save);
@@ -84,7 +107,8 @@
     save.onclick = function () {
       save.disabled = true;
       var card = { id: mod.id, name: mod.name, version: mod.version, description: desc.value.trim(),
-                   price: Math.max(0, parseInt(priceIn.value, 10) || 0), sha256: mod.sha256, size: mod.size };
+                   price: Math.max(0, parseInt(priceIn.value, 10) || 0), sha256: mod.sha256, size: mod.size,
+                   works_on: placeIn.value };
       P.sign(card, ["description", "id", "name", "price", "sha256", "size", "version"]).then(function (signature) {
         card.signature = signature;
         return ask("mod_update", { card: card });

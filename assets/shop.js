@@ -107,7 +107,8 @@
       c.querySelector("h3").textContent = m.name || m.id;
       c.querySelector("p").textContent = m.description || "";
       c.querySelector(".price-tag").textContent = price ? price + " ₽" : "Бесплатно";
-      c.querySelector(".who").textContent = m.version ? "v" + m.version : "";
+      var where = { pc: "Только ПК", phone: "Только телефон" }[m.works_on] || "ПК и телефон";
+      c.querySelector(".who").textContent = where + (m.version ? " · v" + m.version : "");
       if (price) {
         var b = document.createElement("button");
         b.className = "btn";
