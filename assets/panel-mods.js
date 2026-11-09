@@ -99,7 +99,9 @@
     row.appendChild(placeIn);
     var save = el("button", "btn small", "Сохранить");
     var del = el("button", "btn ghost small", "Удалить");
+    var get = el("button", "btn ghost small", "Скачать");
     row.appendChild(save);
+    row.appendChild(get);
     row.appendChild(del);
     c.appendChild(row);
     var note = el("p", "note");
@@ -120,6 +122,23 @@
         save.disabled = false;
         P.say(note, e.message === "нет ключа" ? "Добавь ключ обновлений выше." : (e.message || "Не вышло."), true);
       });
+    };
+    // Создатель скачивает свою модификацию, чтобы проверить, — без покупки.
+    get.onclick = function () {
+      get.disabled = true;
+      P.say(note, "Скачиваю…");
+      ask("mod_download", { id: mod.id }).then(function (d) {
+        get.disabled = false;
+        if (!d.ok) return P.say(note, d.error || "Не вышло.", true);
+        var bin = atob(d.data), bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        var url = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+        var a = document.createElement("a");
+        a.href = url; a.download = d.name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        P.say(note, "Скачано: " + d.name);
+      }).catch(function () { get.disabled = false; P.say(note, "Нет связи.", true); });
     };
     del.onclick = function () {
       if (!window.confirm("Убрать «" + mod.name + "» из магазина?")) return;
