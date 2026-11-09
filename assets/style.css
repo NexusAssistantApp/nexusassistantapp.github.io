@@ -338,3 +338,5 @@ header nav .panel-link::before { content: "★"; margin-right: 5px; font-size: 1
 .buy-choice .plan-name { display: block; font-size: 24px; margin-top: 4px; }
 .buy-choice .price { font-size: 30px; font-weight: 800; margin: 10px 0 4px; }
 .buy-choice .form-note { margin-top: 10px; color: #F5C451; }
+.buy-choice .buy-desc { color: var(--muted); margin: 8px 0 0; line-height: 1.45; }
+.buy-choice .buy-meta { color: var(--muted); font-size: 13px; }

@@ -6,6 +6,7 @@
   if (!api || (!list && !modList)) return;
   var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "";
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
+  var PLAN_FEATURES = "Весь NEXUS · ПК и телефон · Облако";
 
   // «Купить»: the plan, its price and «Оплатить». Until the payment service is on, the button still works
   // and says that paying is not available yet.
@@ -16,13 +17,19 @@
     box.id = "buy-choice";
     box.className = "buy-choice";
     box.innerHTML = '<div class="card"><button class="chat-x" aria-label="Закрыть">×</button>' +
-      '<div class="who"></div><b class="plan-name"></b>' +
+      '<div class="who"></div><b class="plan-name"></b><p class="buy-desc"></p>' +
       '<div class="price"><s class="old"></s><span></span></div>' +
-      '<div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
+      '<div class="buy-meta"></div><div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
     box.querySelector(".who").textContent = short[p.id] ? "Подписка NEXUS" : "Модификация";
     box.querySelector(".plan-name").textContent = short[p.id] || p.name;
     box.querySelector(".price span").textContent = p.price + " ₽";
     if (p.old) box.querySelector(".old").textContent = p.old + " ₽";
+    // the same words as on the card it was opened from
+    var desc = box.querySelector(".buy-desc"), meta = box.querySelector(".buy-meta");
+    desc.textContent = p.description || (short[p.id] ? PLAN_FEATURES : "");
+    desc.hidden = !desc.textContent;
+    meta.textContent = p.meta || "";
+    meta.hidden = !meta.textContent;
     var msg = box.querySelector(".form-note");
     box.querySelector(".pay").onclick = function () {
       if (!ready) { msg.textContent = "Оплата пока недоступна — скоро заработает."; return; }
@@ -69,7 +76,8 @@
       var c = document.createElement("div");
       c.className = "card plan";
       c.innerHTML = '<div class="name"></div><div class="price"><s class="old"></s><span></span></div>'
-        + '<div class="features">Весь NEXUS · ПК и телефон · Облако</div>';
+        + '<div class="features"></div>';
+      c.querySelector(".features").textContent = PLAN_FEATURES;
       c.querySelector(".name").textContent = short[p.id];
       c.querySelector(".price span").textContent = p.price + " ₽";
       if (p.old) {
@@ -108,12 +116,14 @@
       c.querySelector("p").textContent = m.description || "";
       c.querySelector(".price-tag").textContent = price ? price + " ₽" : "Бесплатно";
       var where = { pc: "Только ПК", phone: "Только телефон" }[m.works_on] || "ПК и телефон";
-      c.querySelector(".who").textContent = where + (m.version ? " · v" + m.version : "");
+      var meta = where + (m.version ? " · v" + m.version : "");
+      c.querySelector(".who").textContent = meta;
       if (price) {
         var b = document.createElement("button");
         b.className = "btn";
         b.textContent = "Купить";
-        b.onclick = function () { choose({ id: "mod:" + m.id, name: m.name || m.id, price: price }, ready); };
+        b.onclick = function () { choose({ id: "mod:" + m.id, name: m.name || m.id, price: price,
+                                          description: m.description || "", meta: meta }, ready); };
         c.querySelector(".mod-foot").appendChild(b);
       }
       modList.appendChild(c);
