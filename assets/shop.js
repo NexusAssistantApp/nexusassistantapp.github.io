@@ -60,7 +60,6 @@
   });
 
   fetch(api + "/pay/prices").then(function (r) { return r.json(); }).then(function (d) {
-    if (modList) showMods(d);
     var plans = (d.products || []).filter(function (p) { return short[p.id]; });
     if (!list || !plans.length) return;
     list.innerHTML = "";
@@ -89,22 +88,42 @@
     });
   }).catch(function () {});
 
-  // Paid mods: bought here, they land on the Google account and NEXUS puts them in by itself.
-  function showMods(d) {
-    (d.products || []).forEach(function (p) {
-      if (p.id.indexOf("mod:") !== 0) return;
+  // The mods on the server (what the panel has): free ones say so, paid ones have «Купить».
+  // Bought here, a mod lands on the Google account and NEXUS puts it in by itself.
+  function showMods(mods, ready) {
+    modList.innerHTML = "";
+    if (!mods.length) {
+      var none = document.createElement("p");
+      none.className = "sub";
+      none.textContent = "Пока пусто.";
+      modList.appendChild(none);
+      return;
+    }
+    mods.forEach(function (m) {
+      var price = parseInt(m.price, 10) || 0;
       var c = document.createElement("div");
       c.className = "card mod";
-      c.innerHTML = '<h3></h3><p>Поставится в NEXUS сама.</p><div class="mod-foot"><span class="price-tag"></span></div>';
-      c.querySelector("h3").textContent = p.name;
-      c.querySelector(".price-tag").textContent = p.price + " ₽";
-      var b = document.createElement("button");
-      b.className = "btn";
-      b.textContent = "Купить";
-      b.onclick = function () { choose(p, d.ready); };
-      c.querySelector(".mod-foot").appendChild(b);
+      c.innerHTML = '<h3></h3><p></p><div class="mod-foot"><span class="price-tag"></span><span class="who"></span></div>';
+      c.querySelector("h3").textContent = m.name || m.id;
+      c.querySelector("p").textContent = m.description || "";
+      c.querySelector(".price-tag").textContent = price ? price + " ₽" : "Бесплатно";
+      c.querySelector(".who").textContent = m.version ? "v" + m.version : "";
+      if (price) {
+        var b = document.createElement("button");
+        b.className = "btn";
+        b.textContent = "Купить";
+        b.onclick = function () { choose({ id: "mod:" + m.id, name: m.name || m.id, price: price }, ready); };
+        c.querySelector(".mod-foot").appendChild(b);
+      }
       modList.appendChild(c);
     });
+  }
+  if (modList) {
+    Promise.all([
+      fetch(api + "/mods").then(function (r) { return r.json(); }),
+      fetch(api + "/pay/prices").then(function (r) { return r.json(); }).catch(function () { return {}; })
+    ]).then(function (both) { showMods(both[0].mods || [], !!both[1].ready); })
+      .catch(function () { modList.innerHTML = '<p class="sub">Список сейчас недоступен.</p>'; });
   }
 })();
 
