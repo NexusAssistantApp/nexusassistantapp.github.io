@@ -7,6 +7,7 @@
   var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "";
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
   var PLAN_FEATURES = "Весь NEXUS · ПК и телефон · Облако";
+  var mine = {}, modButtons = {};             // bought mods of the signed-in Google account → «Есть»
 
   // «Купить»: the plan, its price and «Оплатить». Until the payment service is on, the button still works
   // and says that paying is not available yet.
@@ -53,6 +54,7 @@
       signin.scrollIntoView({ block: "center", behavior: "smooth" });
       return;
     }
+    if (mine[product]) { note.textContent = "Эта модификация уже есть — она в NEXUS."; return; }
     note.textContent = "Открываю оплату…";
     fetch(api + "/pay/create", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ product: product, id_token: window.NEXUS_TOKEN }) })
@@ -61,9 +63,31 @@
       .catch(function () { note.textContent = "Нет связи. Попробуй позже."; });
   }
 
+  // Signed in with Google: the mods bought on this account say «Есть» instead of «Купить».
+  function markMine() {
+    if (!window.NEXUS_TOKEN || !modList) return Promise.resolve();
+    return fetch(api + "/pay/mine", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id_token: window.NEXUS_TOKEN }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        (d.mods || []).forEach(function (id) {
+          mine["mod:" + id] = true;
+          var b = modButtons[id];
+          if (!b || !b.parentNode) return;
+          var have = document.createElement("span");
+          have.className = "btn ghost owned";
+          have.textContent = "Есть";
+          have.title = "Куплено — уже в NEXUS на ПК и телефоне";
+          b.parentNode.replaceChild(have, b);
+        });
+      }).catch(function () {});
+  }
+
   document.addEventListener("nexus-google", function () {
     signin.hidden = true;
-    if (wanted) { var p = wanted; wanted = ""; buy(p); }
+    markMine().then(function () {                 // first what is already bought, then the purchase
+      if (wanted) { var p = wanted; wanted = ""; buy(p); }
+    });
   });
 
   fetch(api + "/pay/prices").then(function (r) { return r.json(); }).then(function (d) {
@@ -122,6 +146,7 @@
         var b = document.createElement("button");
         b.className = "btn";
         b.textContent = "Купить";
+        modButtons[m.id] = b;
         b.onclick = function () { choose({ id: "mod:" + m.id, name: m.name || m.id, price: price,
                                           description: m.description || "", meta: meta }, ready); };
         c.querySelector(".mod-foot").appendChild(b);
@@ -133,7 +158,7 @@
     Promise.all([
       fetch(api + "/mods").then(function (r) { return r.json(); }),
       fetch(api + "/pay/prices").then(function (r) { return r.json(); }).catch(function () { return {}; })
-    ]).then(function (both) { showMods(both[0].mods || [], !!both[1].ready); })
+    ]).then(function (both) { showMods(both[0].mods || [], !!both[1].ready); markMine(); })
       .catch(function () { modList.innerHTML = '<p class="sub">Список сейчас недоступен.</p>'; });
   }
 })();

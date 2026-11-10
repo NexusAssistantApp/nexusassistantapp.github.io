@@ -340,3 +340,6 @@ header nav .panel-link::before { content: "★"; margin-right: 5px; font-size: 1
 .buy-choice .form-note { margin-top: 10px; color: #F5C451; }
 .buy-choice .buy-desc { color: var(--muted); margin: 8px 0 0; line-height: 1.45; }
 .buy-choice .buy-meta { color: var(--muted); font-size: 13px; }
+
+.btn.owned { color: #3DDC84; border-color: rgba(61,220,132,.45); cursor: default; }
+.btn.owned:hover { border-color: rgba(61,220,132,.45); }
