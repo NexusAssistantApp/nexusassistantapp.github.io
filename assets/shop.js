@@ -54,7 +54,7 @@
       if (!code) { pnote.textContent = "Введи промокод."; return; }
       pnote.textContent = "Проверяю…";
       fetch(api + "/pay/promo", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: code, product: p.id }) })
+        body: JSON.stringify({ code: code, product: p.id, id_token: window.NEXUS_TOKEN || "" }) })
         .then(function (r) { return r.json(); })
         .then(function (d) {
           if (!d.ok) { reset(); pnote.className = "promo-note bad"; pnote.textContent = d.error || "Не подошёл."; return; }

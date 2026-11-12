@@ -72,7 +72,9 @@
         line.appendChild(el("span", "price-tag", "−" + x.percent + "%"));
         line.appendChild(el("span", x.ended ? "note bad" : "note",
                             x.ended ? "истёк " + day(x.until) : (x.until ? "до " + day(x.until) : "без срока")));
-        line.appendChild(el("span", "note", x.used ? "оплачено с ним: " + x.used : "ещё не использован"));
+        line.appendChild(el("span", "note", (x.limit ? "использован " + x.used + " из " + x.limit
+                                                    : (x.used ? "оплачено с ним: " + x.used : "ещё не использован"))));
+        if (x["for"]) line.appendChild(el("span", "note", "только для " + x["for"]));
         var copy = el("button", "btn ghost small", "Скопировать");
         copy.onclick = function () {
           try { navigator.clipboard.writeText(x.code); P.say(note, "Скопировано: " + x.code); }
@@ -100,6 +102,19 @@
     code.style.maxWidth = "240px";
     percent.style.maxWidth = "110px";
     until.style.maxWidth = "170px";
+    var who = P.input("Только для (почта аккаунта; пусто — для всех)", "");
+    who.style.maxWidth = "320px";
+    var times = document.createElement("select");             // сколько раз можно оплатить с этим кодом
+    [["Сколько угодно раз", 0], ["1 раз", 1], ["5 раз", 5], ["10 раз", 10], ["100 раз", 100]].forEach(function (t) {
+      var o = document.createElement("option");
+      o.value = String(t[1]);
+      o.textContent = t[0];
+      times.appendChild(o);
+    });
+    times.style.maxWidth = "200px";
+    var limits = el("div", "panel-line");
+    limits.appendChild(who);
+    limits.appendChild(times);
     var quick = el("div", "panel-line");
     quick.appendChild(el("span", "note", "Срок:"));
     [["Без срока", 0], ["Неделя", 7], ["Месяц", 30], ["3 месяца", 91]].forEach(function (q) {
@@ -115,10 +130,12 @@
     make.onclick = function () {
       make.disabled = true;
       ask("promo_add", { code: code.value.trim(), percent: parseInt(percent.value, 10) || 0,
-                         until: until.value || "" }).then(function (r) {
+                         until: until.value || "", limit: parseInt(times.value, 10) || 0,
+                         "for": who.value.trim() }).then(function (r) {
         make.disabled = false;
         if (!r.ok) return P.say(note, r.error || "Не вышло.", true);
         code.value = "";
+        who.value = "";
         P.say(note, "Готово.");
         draw(r.promos || []);
       }).catch(function () { make.disabled = false; P.say(note, "Нет связи.", true); });
@@ -129,6 +146,7 @@
     add.appendChild(make);
     c.appendChild(add);
     c.appendChild(quick);
+    c.appendChild(limits);
     c.appendChild(note);
     c.appendChild(list);
     body.appendChild(c);
