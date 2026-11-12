@@ -343,3 +343,11 @@ header nav .panel-link::before { content: "★"; margin-right: 5px; font-size: 1
 
 .btn.owned { color: #3DDC84; border-color: rgba(61,220,132,.45); cursor: default; }
 .btn.owned:hover { border-color: rgba(61,220,132,.45); }
+
+.buy-choice .promo { display: flex; gap: 8px; margin-top: 14px; }
+.buy-choice .promo-code { flex: 1; min-width: 0; background: var(--bg); color: var(--text); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 14px; text-transform: uppercase; }
+.buy-choice .promo-code:focus { outline: none; border-color: var(--accent); }
+.buy-choice .promo-note { min-height: 18px; margin-top: 6px; font-size: 13px; color: var(--muted); }
+.buy-choice .promo-note.good { color: #3DDC84; }
+.buy-choice .promo-note.bad { color: #FF6B6B; }

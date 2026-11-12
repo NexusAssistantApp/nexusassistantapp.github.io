@@ -47,9 +47,68 @@
       c.appendChild(saleSave);
       c.appendChild(note);
       body.appendChild(c);
+      promos(body);
       orders(body);
     }).catch(function () { fail(body, "Нет связи с сервером."); });
   };
+
+  // ------------------------------------------------------------------ промокоды
+  // Скидка в процентах на подписку и платные модификации; покупатель вводит код при оплате.
+  function promos(body) {
+    var c = P.card("Промокоды");
+    var list = el("div");
+    var note = el("p", "note");
+    var draw = function (rows) {
+      clear(list);
+      if (!rows.length) list.appendChild(el("p", "note", "Промокодов пока нет."));
+      rows.forEach(function (x) {
+        var line = el("div", "panel-line");
+        line.appendChild(el("b", null, x.code));
+        line.appendChild(el("span", "price-tag", "−" + x.percent + "%"));
+        line.appendChild(el("span", "note", x.used ? "оплачено с ним: " + x.used : "ещё не использован"));
+        var copy = el("button", "btn ghost small", "Скопировать");
+        copy.onclick = function () {
+          try { navigator.clipboard.writeText(x.code); P.say(note, "Скопировано: " + x.code); }
+          catch (e) { P.say(note, x.code); }
+        };
+        var del = el("button", "btn ghost small", "Удалить");
+        del.onclick = function () {
+          if (!window.confirm("Удалить промокод " + x.code + "?")) return;
+          ask("promo_delete", { code: x.code }).then(function (r) {
+            if (!r.ok) return P.say(note, r.error || "Не вышло.", true);
+            draw(r.promos || []);
+          }).catch(function () { P.say(note, "Нет связи.", true); });
+        };
+        line.appendChild(copy);
+        line.appendChild(del);
+        list.appendChild(line);
+      });
+    };
+    var add = el("div", "panel-line");
+    var code = P.input("Код (пусто — придумаю сам)", "");
+    var percent = P.input("Скидка, %", "10");
+    code.style.maxWidth = "240px";
+    percent.style.maxWidth = "110px";
+    var make = el("button", "btn small", "Создать");
+    make.onclick = function () {
+      make.disabled = true;
+      ask("promo_add", { code: code.value.trim(), percent: parseInt(percent.value, 10) || 0 }).then(function (r) {
+        make.disabled = false;
+        if (!r.ok) return P.say(note, r.error || "Не вышло.", true);
+        code.value = "";
+        P.say(note, "Готово.");
+        draw(r.promos || []);
+      }).catch(function () { make.disabled = false; P.say(note, "Нет связи.", true); });
+    };
+    add.appendChild(code);
+    add.appendChild(percent);
+    add.appendChild(make);
+    c.appendChild(add);
+    c.appendChild(note);
+    c.appendChild(list);
+    body.appendChild(c);
+    ask("promos").then(function (r) { draw((r && r.promos) || []); }).catch(function () {});
+  }
 
   function orders(body) {
     ask("orders").then(function (o) {

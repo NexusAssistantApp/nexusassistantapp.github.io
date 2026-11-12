@@ -4,7 +4,7 @@
   var api = window.NEXUS_CHAT || "", list = document.getElementById("plans-list");
   var modList = document.getElementById("mods-list");             // the «Модификации» page: paid mods
   if (!api || (!list && !modList)) return;
-  var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "";
+  var signin = document.getElementById("buy-signin"), note = document.getElementById("buy-note"), wanted = "", wantedPromo = "";
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
   var PLAN_FEATURES = "Весь NEXUS · ПК и телефон · Облако";
   var mine = {}, modButtons = {};             // bought mods of the signed-in Google account → «Есть»
@@ -20,7 +20,10 @@
     box.innerHTML = '<div class="card"><button class="chat-x" aria-label="Закрыть">×</button>' +
       '<div class="who"></div><b class="plan-name"></b><p class="buy-desc"></p>' +
       '<div class="price"><s class="old"></s><span></span></div>' +
-      '<div class="buy-meta"></div><div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
+      '<div class="buy-meta"></div>' +
+      '<div class="promo"><input class="promo-code" placeholder="Промокод" maxlength="24" autocomplete="off">' +
+      '<button class="btn ghost promo-go">Применить</button></div><div class="promo-note"></div>' +
+      '<div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
     box.querySelector(".who").textContent = short[p.id] ? "Подписка NEXUS" : "Модификация";
     box.querySelector(".plan-name").textContent = short[p.id] || p.name;
     box.querySelector(".price span").textContent = p.price + " ₽";
@@ -32,19 +35,43 @@
     meta.textContent = p.meta || "";
     meta.hidden = !meta.textContent;
     var msg = box.querySelector(".form-note");
+    // Промокод: «Применить» спрашивает у сервера новую цену; при оплате код уходит вместе с заказом.
+    var promo = "", input = box.querySelector(".promo-code"), pnote = box.querySelector(".promo-note");
+    var oldTag = box.querySelector(".old"), now = box.querySelector(".price span");
+    var apply = function () {
+      var code = input.value.trim();
+      if (!code) { pnote.textContent = "Введи промокод."; return; }
+      pnote.textContent = "Проверяю…";
+      fetch(api + "/pay/promo", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code, product: p.id }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.ok) { promo = ""; pnote.className = "promo-note bad"; pnote.textContent = d.error || "Не подошёл.";
+                       now.textContent = p.price + " ₽"; oldTag.textContent = p.old ? p.old + " ₽" : ""; return; }
+          promo = d.code;
+          pnote.className = "promo-note good";
+          pnote.textContent = "Промокод " + d.code + ": −" + d.percent + "%";
+          oldTag.textContent = d.was + " ₽";
+          now.textContent = d.price + " ₽";
+        })
+        .catch(function () { pnote.className = "promo-note bad"; pnote.textContent = "Нет связи. Попробуй позже."; });
+    };
+    box.querySelector(".promo-go").onclick = apply;
+    input.onkeydown = function (e) { if (e.key === "Enter") apply(); };
     box.querySelector(".pay").onclick = function () {
       if (!ready) { msg.textContent = "Оплата пока недоступна — скоро заработает."; return; }
       box.remove();
-      buy(p.id);
+      buy(p.id, promo);
     };
     box.querySelector(".chat-x").onclick = function () { box.remove(); };
     box.onclick = function (e) { if (e.target === box) box.remove(); };
     document.body.appendChild(box);
   }
 
-  function buy(product) {
+  function buy(product, promo) {
     if (!window.NEXUS_TOKEN) {
       wanted = product;
+      wantedPromo = promo || "";
       signin.hidden = false;
       if (window.nexusGoogleInit) window.nexusGoogleInit();
       if (window.google && window.google.accounts) {
@@ -57,7 +84,7 @@
     if (mine[product]) { note.textContent = "Эта модификация уже есть — она в NEXUS."; return; }
     note.textContent = "Открываю оплату…";
     fetch(api + "/pay/create", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ product: product, id_token: window.NEXUS_TOKEN }) })
+      body: JSON.stringify({ product: product, id_token: window.NEXUS_TOKEN, promo: promo || "" }) })
       .then(function (r) { return r.json(); })
       .then(function (d) { if (d.ok && d.url) location.href = d.url; else note.textContent = d.error || "Не получилось."; })
       .catch(function () { note.textContent = "Нет связи. Попробуй позже."; });
@@ -86,7 +113,7 @@
   document.addEventListener("nexus-google", function () {
     signin.hidden = true;
     markMine().then(function () {                 // first what is already bought, then the purchase
-      if (wanted) { var p = wanted; wanted = ""; buy(p); }
+      if (wanted) { var p = wanted, code = wantedPromo; wanted = ""; wantedPromo = ""; buy(p, code); }
     });
   });
 
