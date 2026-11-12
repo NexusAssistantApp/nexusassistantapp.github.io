@@ -52,6 +52,11 @@
     }).catch(function () { fail(body, "Нет связи с сервером."); });
   };
 
+  function day(iso) {                                        // «2026-11-30» → «30.11.2026»
+    var p = String(iso || "").split("-");
+    return p.length === 3 ? p[2] + "." + p[1] + "." + p[0] : String(iso || "");
+  }
+
   // ------------------------------------------------------------------ промокоды
   // Скидка в процентах на подписку и платные модификации; покупатель вводит код при оплате.
   function promos(body) {
@@ -65,6 +70,8 @@
         var line = el("div", "panel-line");
         line.appendChild(el("b", null, x.code));
         line.appendChild(el("span", "price-tag", "−" + x.percent + "%"));
+        line.appendChild(el("span", x.ended ? "note bad" : "note",
+                            x.ended ? "истёк " + day(x.until) : (x.until ? "до " + day(x.until) : "без срока")));
         line.appendChild(el("span", "note", x.used ? "оплачено с ним: " + x.used : "ещё не использован"));
         var copy = el("button", "btn ghost small", "Скопировать");
         copy.onclick = function () {
@@ -87,12 +94,28 @@
     var add = el("div", "panel-line");
     var code = P.input("Код (пусто — придумаю сам)", "");
     var percent = P.input("Скидка, %", "10");
+    var until = document.createElement("input");             // последний день, когда код работает
+    until.type = "date";
+    until.title = "До какого дня действует (пусто — без срока)";
     code.style.maxWidth = "240px";
     percent.style.maxWidth = "110px";
+    until.style.maxWidth = "170px";
+    var quick = el("div", "panel-line");
+    quick.appendChild(el("span", "note", "Срок:"));
+    [["Без срока", 0], ["Неделя", 7], ["Месяц", 30], ["3 месяца", 91]].forEach(function (q) {
+      var b = el("button", "btn ghost small", q[0]);
+      b.onclick = function () {
+        if (!q[1]) { until.value = ""; return; }
+        var d = new Date(Date.now() + q[1] * 86400000);
+        until.value = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+      };
+      quick.appendChild(b);
+    });
     var make = el("button", "btn small", "Создать");
     make.onclick = function () {
       make.disabled = true;
-      ask("promo_add", { code: code.value.trim(), percent: parseInt(percent.value, 10) || 0 }).then(function (r) {
+      ask("promo_add", { code: code.value.trim(), percent: parseInt(percent.value, 10) || 0,
+                         until: until.value || "" }).then(function (r) {
         make.disabled = false;
         if (!r.ok) return P.say(note, r.error || "Не вышло.", true);
         code.value = "";
@@ -102,8 +125,10 @@
     };
     add.appendChild(code);
     add.appendChild(percent);
+    add.appendChild(until);
     add.appendChild(make);
     c.appendChild(add);
+    c.appendChild(quick);
     c.appendChild(note);
     c.appendChild(list);
     body.appendChild(c);

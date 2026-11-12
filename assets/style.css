@@ -351,3 +351,5 @@ header nav .panel-link::before { content: "★"; margin-right: 5px; font-size: 1
 .buy-choice .promo-note { min-height: 18px; margin-top: 6px; font-size: 13px; color: var(--muted); }
 .buy-choice .promo-note.good { color: #3DDC84; }
 .buy-choice .promo-note.bad { color: #FF6B6B; }
+.buy-choice .promo-code:disabled { opacity: .7; }
+#panel .note.bad { color: #FF6B6B; }

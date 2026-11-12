@@ -22,7 +22,8 @@
       '<div class="price"><s class="old"></s><span></span></div>' +
       '<div class="buy-meta"></div>' +
       '<div class="promo"><input class="promo-code" placeholder="Промокод" maxlength="24" autocomplete="off">' +
-      '<button class="btn ghost promo-go">Применить</button></div><div class="promo-note"></div>' +
+      '<button class="btn ghost promo-go">Применить</button>' +
+      '<button class="btn ghost promo-off" hidden>Убрать</button></div><div class="promo-note"></div>' +
       '<div class="cta"><button class="btn pay">Оплатить</button></div><div class="form-note"></div></div>';
     box.querySelector(".who").textContent = short[p.id] ? "Подписка NEXUS" : "Модификация";
     box.querySelector(".plan-name").textContent = short[p.id] || p.name;
@@ -38,6 +39,16 @@
     // Промокод: «Применить» спрашивает у сервера новую цену; при оплате код уходит вместе с заказом.
     var promo = "", input = box.querySelector(".promo-code"), pnote = box.querySelector(".promo-note");
     var oldTag = box.querySelector(".old"), now = box.querySelector(".price span");
+    var go = box.querySelector(".promo-go"), off = box.querySelector(".promo-off");
+    var day = function (iso) { var q = String(iso).split("-"); return q[2] + "." + q[1] + "." + q[0]; };
+    var reset = function () {                                 // «Убрать»: снова обычная цена
+      promo = "";
+      now.textContent = p.price + " ₽";
+      oldTag.textContent = p.old ? p.old + " ₽" : "";
+      input.disabled = false;
+      go.hidden = false;
+      off.hidden = true;
+    };
     var apply = function () {
       var code = input.value.trim();
       if (!code) { pnote.textContent = "Введи промокод."; return; }
@@ -46,17 +57,20 @@
         body: JSON.stringify({ code: code, product: p.id }) })
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          if (!d.ok) { promo = ""; pnote.className = "promo-note bad"; pnote.textContent = d.error || "Не подошёл.";
-                       now.textContent = p.price + " ₽"; oldTag.textContent = p.old ? p.old + " ₽" : ""; return; }
+          if (!d.ok) { reset(); pnote.className = "promo-note bad"; pnote.textContent = d.error || "Не подошёл."; return; }
           promo = d.code;
           pnote.className = "promo-note good";
-          pnote.textContent = "Промокод " + d.code + ": −" + d.percent + "%";
+          pnote.textContent = "Промокод " + d.code + ": −" + d.percent + "%" + (d.until ? " · действует до " + day(d.until) : "");
+          input.disabled = true;
+          go.hidden = true;
+          off.hidden = false;
           oldTag.textContent = d.was + " ₽";
           now.textContent = d.price + " ₽";
         })
         .catch(function () { pnote.className = "promo-note bad"; pnote.textContent = "Нет связи. Попробуй позже."; });
     };
-    box.querySelector(".promo-go").onclick = apply;
+    go.onclick = apply;
+    off.onclick = function () { reset(); input.value = ""; pnote.className = "promo-note"; pnote.textContent = ""; input.focus(); };
     input.onkeydown = function (e) { if (e.key === "Enter") apply(); };
     box.querySelector(".pay").onclick = function () {
       if (!ready) { msg.textContent = "Оплата пока недоступна — скоро заработает."; return; }
