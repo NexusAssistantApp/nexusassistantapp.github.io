@@ -166,9 +166,9 @@
   function showMods(mods, ready) {
     modList.innerHTML = "";
     if (!mods.length) {
-      var none = document.createElement("p");
-      none.className = "sub";
-      none.textContent = "Пока пусто.";
+      var none = document.createElement("div");
+      none.className = "empty";
+      none.textContent = "Модификаций пока нет.";
       modList.appendChild(none);
       return;
     }

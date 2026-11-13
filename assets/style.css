@@ -353,3 +353,44 @@ header nav .panel-link::before { content: "★"; margin-right: 5px; font-size: 1
 .buy-choice .promo-note.bad { color: #FF6B6B; }
 .buy-choice .promo-code:disabled { opacity: .7; }
 #panel .note.bad { color: #FF6B6B; }
+
+/* ---------------------------------------------------------------- правки вида (12.11) */
+/* подвал всегда внизу, даже на коротких страницах */
+body { min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1 0 auto; }
+footer { padding-bottom: 88px; }                       /* кнопка «Чат» не закрывает ссылки */
+footer .links { flex-wrap: wrap; gap: 10px 20px; }
+/* пустой список — во всю ширину, а не в одной колонке */
+.grid > .empty, .grid > .sub { grid-column: 1 / -1; }
+/* скачать: кнопки на одной высоте, «Как поставить» под кнопкой */
+.dl { position: relative; padding-bottom: 60px; }
+.dl .btn + .note { position: absolute; left: 24px; bottom: 20px; margin: 0; }
+/* вход через Google не растягивается на всю ширину */
+.gbutton, .gbtn { max-width: 400px; }
+/* длинные слова не вылезают за экран */
+h1, h2, h3, .doc p, .doc li, .topic, .post p, .review p { overflow-wrap: break-word; }
+.buy-choice { overflow-y: auto; }
+.buy-choice .card { max-height: calc(100vh - 32px); overflow-y: auto; }
+
+@media (max-width: 560px) {
+  header .wrap { gap: 8px 16px; }
+  nav { gap: 16px; font-size: 14px; }
+  nav a[href="download.html"] { display: none; }   /* есть синяя кнопка «Скачать» рядом */
+  .hero { padding: 48px 0 40px; }
+  .stage { width: 100%; max-width: 280px; margin: 0 auto; padding-top: 80px; }
+  .hat { width: 84px; height: 92px; top: -80px; margin-left: -30px; }
+  section { padding: 52px 0; }
+  h2 { font-size: 28px; }
+  .doc { padding: 36px 16px 56px; }
+  .doc h1 { font-size: 28px; }
+  footer .wrap { flex-direction: column; align-items: flex-start; gap: 14px; }
+  footer .links { margin-left: 0; }
+  .contact { padding: 24px; }
+  .contact .cta { width: 100%; }
+  .contact .cta .btn { width: 100%; justify-content: center; }
+  .tabs .btn { margin-left: 0; }
+  .chat-open { right: 16px; bottom: 16px; }
+  .chat-box { right: 16px; left: 16px; width: auto; max-width: none; bottom: 72px; height: min(440px, calc(100vh - 140px)); }
+  .panel-head { flex-wrap: wrap; }
+  .buy-choice .promo .btn { padding: 10px 14px; }
+}

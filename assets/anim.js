@@ -43,8 +43,9 @@
   }
   function burst() {
     if (!ctx || calm) return;
-    var r = face.getBoundingClientRect();
-    for (var i = 0; i < 60; i++) bits.push(piece(r.left + r.width / 2, r.top + r.height * 0.3, true));
+    var x = innerWidth / 2, y = innerHeight * 0.3;          // no face on this page: from the middle
+    if (face) { var r = face.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height * 0.3; }
+    for (var i = 0; i < 60; i++) bits.push(piece(x, y, true));
   }
   window.nexusConfetti = burst;
   if (ctx && !calm) {
