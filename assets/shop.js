@@ -8,6 +8,29 @@
   var short = { "1m": "1 месяц", "3m": "3 месяца", "1y": "1 год" };
   var PLAN_FEATURES = "Весь NEXUS · ПК и телефон · Облако";
   var mine = {}, modButtons = {};             // bought mods of the signed-in Google account → «Есть»
+  var accountView = null;                     // the open buy window redraws its «Аккаунт» after sign-in
+
+  // Google's sign-in script, when this page has not loaded it yet (the mods page has no reviews or chat).
+  function loadGoogle() {
+    if (!window.NEXUS_GOOGLE || document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) return;
+    var script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.onload = function () {
+      if (window.nexusGoogleInit) window.nexusGoogleInit();
+      document.dispatchEvent(new Event("nexus-google-ready"));
+    };
+    document.head.appendChild(script);
+  }
+
+  // The signed-in buyer's e-mail, read from the Google token (only to show it; the server checks the token).
+  function signedEmail() {
+    try {
+      var part = String(window.NEXUS_TOKEN || "").split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      while (part.length % 4) part += "=";
+      return JSON.parse(decodeURIComponent(escape(atob(part)))).email || "";
+    } catch (e) { return ""; }
+  }
 
   // «Купить»: the plan, its price and «Оплатить». Until the payment service is on, the button still works
   // and says that paying is not available yet.
@@ -21,6 +44,8 @@
       '<div class="who"></div><b class="plan-name"></b><p class="buy-desc"></p>' +
       '<div class="price"><s class="old"></s><span></span></div>' +
       '<div class="buy-meta"></div>' +
+      '<div class="buy-account"><div class="who">Аккаунт для покупки</div><div class="acc-in"></div>' +
+      '<div class="gbutton"></div></div>' +
       '<div class="promo"><input class="promo-code" placeholder="Промокод" maxlength="24" autocomplete="off">' +
       '<button class="btn ghost promo-go">Применить</button>' +
       '<button class="btn ghost promo-off" hidden>Убрать</button></div><div class="promo-note"></div>' +
@@ -72,14 +97,52 @@
     go.onclick = apply;
     off.onclick = function () { reset(); input.value = ""; pnote.className = "promo-note"; pnote.textContent = ""; input.focus(); };
     input.onkeydown = function (e) { if (e.key === "Enter") apply(); };
-    box.querySelector(".pay").onclick = function () {
+    // Аккаунт: без входа через Google оплатить нельзя — покупка приходит на этот аккаунт (его почта
+    // уходит в платёжный сервис вместе с заказом).
+    var pay = box.querySelector(".pay"), accIn = box.querySelector(".acc-in"), gbtn = box.querySelector(".gbutton");
+    accountView = function () {
+      if (!document.body.contains(box)) { accountView = null; return; }
+      var email = window.NEXUS_TOKEN ? signedEmail() : "";
+      if (window.NEXUS_TOKEN) {
+        accIn.className = "acc-in good";
+        accIn.textContent = "";
+        var who = document.createElement("b");
+        who.textContent = "✓ " + (email || "Вход выполнен");
+        var hint = document.createElement("div");
+        hint.className = "acc-hint";
+        hint.textContent = "Покупка придёт на этот аккаунт";
+        accIn.appendChild(who);
+        accIn.appendChild(hint);
+        gbtn.hidden = true;
+        pay.disabled = false;
+        msg.textContent = "";
+      } else {
+        accIn.className = "acc-in";
+        accIn.textContent = "Войди через Google — подписка или модификация придёт на этот аккаунт.";
+        gbtn.hidden = false;
+        pay.disabled = true;
+        if (window.nexusGoogleInit) window.nexusGoogleInit();
+        if (window.google && window.google.accounts && !gbtn.childNodes.length) {
+          window.google.accounts.id.renderButton(gbtn,
+            { theme: "filled_black", size: "large", text: "signin_with", locale: "ru", width: 280 });
+        } else if (!(window.google && window.google.accounts)) {
+          accIn.textContent = "Загружаю вход через Google…";
+          loadGoogle();
+        }
+      }
+    };
+    pay.onclick = function () {
+      if (!window.NEXUS_TOKEN) { msg.textContent = "Сначала войди через Google."; return; }
       if (!ready) { msg.textContent = "Оплата пока недоступна — скоро заработает."; return; }
       box.remove();
+      accountView = null;
       buy(p.id, promo);
     };
-    box.querySelector(".chat-x").onclick = function () { box.remove(); };
-    box.onclick = function (e) { if (e.target === box) box.remove(); };
+    var close = function () { box.remove(); accountView = null; };
+    box.querySelector(".chat-x").onclick = close;
+    box.onclick = function (e) { if (e.target === box) close(); };
     document.body.appendChild(box);
+    accountView();
   }
 
   function buy(product, promo) {
@@ -124,8 +187,10 @@
       }).catch(function () {});
   }
 
+  document.addEventListener("nexus-google-ready", function () { if (accountView) accountView(); });
   document.addEventListener("nexus-google", function () {
-    signin.hidden = true;
+    if (accountView) accountView();
+    if (signin) signin.hidden = true;
     markMine().then(function () {                 // first what is already bought, then the purchase
       if (wanted) { var p = wanted, code = wantedPromo; wanted = ""; wantedPromo = ""; buy(p, code); }
     });

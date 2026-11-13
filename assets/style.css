@@ -394,3 +394,10 @@ h1, h2, h3, .doc p, .doc li, .topic, .post p, .review p { overflow-wrap: break-w
   .panel-head { flex-wrap: wrap; }
   .buy-choice .promo .btn { padding: 10px 14px; }
 }
+.buy-choice .buy-account { margin-top: 14px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.buy-choice .buy-account .who { margin-bottom: 6px; }
+.buy-choice .acc-in { font-size: 14px; color: var(--muted); line-height: 1.4; }
+.buy-choice .acc-in.good b { color: #3DDC84; overflow-wrap: anywhere; }
+.buy-choice .acc-hint { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.buy-choice .buy-account .gbutton { margin-top: 10px; min-height: 40px; }
+.buy-choice .pay:disabled { opacity: .45; cursor: not-allowed; }
