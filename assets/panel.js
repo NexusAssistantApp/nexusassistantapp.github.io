@@ -79,7 +79,7 @@
 
   // ------------------------------------------------------------------ каркас
   var TABS = [["updates", "Версии"], ["mods", "Модификации"], ["prices", "Цены"], ["chats", "Чат"],
-              ["forum", "Форум"], ["reviews", "Отзывы"], ["users", "Аккаунты"]];
+              ["forum", "Форум"], ["reviews", "Отзывы"], ["users", "Аккаунты"], ["reports", "Жалобы"]];
 
   function shell(name) {
     clear(root);
@@ -95,6 +95,7 @@
     root.appendChild(body);
     TABS.forEach(function (t) {
       var b = el("button", "panel-tab" + (t[0] === tab ? " on" : ""), t[1]);
+      b.dataset.tab = t[0];
       b.onclick = function () {
         tab = t[0];
         Array.prototype.forEach.call(bar.children, function (c) { c.className = "panel-tab"; });
@@ -104,6 +105,8 @@
       bar.appendChild(b);
     });
     draw(body);
+    if (window.nexusPanelReportsCount) window.nexusPanelReportsCount();   // «Жалобы · N» сразу
+    if (window.nexusPanelReportsCount) window.nexusPanelReportsCount();
   }
 
   function draw(body) {

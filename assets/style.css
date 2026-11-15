@@ -401,3 +401,11 @@ h1, h2, h3, .doc p, .doc li, .topic, .post p, .review p { overflow-wrap: break-w
 .buy-choice .acc-hint { color: var(--muted); font-size: 13px; margin-top: 2px; }
 .buy-choice .buy-account .gbutton { margin-top: 10px; min-height: 40px; }
 .buy-choice .pay:disabled { opacity: .45; cursor: not-allowed; }
+
+/* панель → «Жалобы» */
+.report { align-items: flex-start; justify-content: space-between; }
+.report.done { opacity: .6; }
+.report-info { display: grid; gap: 4px; flex: 1 1 320px; min-width: 0; }
+.report-text { margin: 6px 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--panel2);
+  border-radius: 8px; white-space: pre-wrap; overflow-wrap: break-word; }
+.report-btns { display: flex; gap: 8px; flex-wrap: wrap; }
