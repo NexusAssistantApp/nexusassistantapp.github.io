@@ -412,3 +412,4 @@ h1, h2, h3, .doc p, .doc li, .topic, .post p, .review p { overflow-wrap: break-w
 
 .buy-choice .form-note.pay-off { color: var(--text); line-height: 1.5; }
 .buy-choice .card { overflow-x: hidden; }
+.bug-img { display: block; max-width: 100%; max-height: 360px; border-radius: 10px; margin-top: 8px; }

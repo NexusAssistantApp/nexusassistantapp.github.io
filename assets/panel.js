@@ -79,7 +79,7 @@
 
   // ------------------------------------------------------------------ каркас
   var TABS = [["updates", "Версии"], ["mods", "Модификации"], ["prices", "Цены"], ["chats", "Чат"],
-              ["forum", "Форум"], ["reviews", "Отзывы"], ["users", "Аккаунты"], ["reports", "Жалобы"]];
+              ["forum", "Форум"], ["reviews", "Отзывы"], ["users", "Аккаунты"], ["reports", "Жалобы"], ["bugs", "Ошибки"]];
 
   function shell(name) {
     clear(root);
@@ -106,7 +106,7 @@
     });
     draw(body);
     if (window.nexusPanelReportsCount) window.nexusPanelReportsCount();   // «Жалобы · N» сразу
-    if (window.nexusPanelReportsCount) window.nexusPanelReportsCount();
+    if (window.nexusPanelBugsCount) window.nexusPanelBugsCount();         // «Ошибки · N»
   }
 
   function draw(body) {
