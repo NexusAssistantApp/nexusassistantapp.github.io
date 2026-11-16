@@ -120,7 +120,7 @@
         accIn.className = "acc-in";
         accIn.textContent = "Войди через Google — подписка или модификация придёт на этот аккаунт.";
         gbtn.hidden = false;
-        pay.disabled = true;
+        pay.disabled = !!ready;                 // пока оплата выключена, кнопка жмётся и объясняет
         if (window.nexusGoogleInit) window.nexusGoogleInit();
         if (window.google && window.google.accounts && !gbtn.childNodes.length) {
           window.google.accounts.id.renderButton(gbtn,
@@ -132,11 +132,28 @@
       }
     };
     pay.onclick = function () {
+      if (!ready) { notReady(); return; }
       if (!window.NEXUS_TOKEN) { msg.textContent = "Сначала войди через Google."; return; }
-      if (!ready) { msg.textContent = "Оплата пока недоступна — скоро заработает."; return; }
       box.remove();
       accountView = null;
       buy(p.id, promo);
+    };
+    // Platega ещё не подключена: честно говорим и даём, куда написать.
+    var notReady = function () {
+      msg.className = "form-note pay-off";
+      msg.textContent = "Платёжная система пока не подключена. Оформить подписку можно, написав нам: ";
+      var chat = document.createElement("a");
+      chat.href = "#"; chat.textContent = "поддержка на сайте";
+      chat.onclick = function (e) {
+        e.preventDefault(); close();
+        var open = document.querySelector("[data-chat]");
+        if (open) open.click();
+      };
+      var bot = document.createElement("a");
+      bot.href = window.NEXUS_TELEGRAM || "#"; bot.target = "_blank"; bot.rel = "noopener";
+      bot.textContent = "Telegram-бот";
+      msg.appendChild(chat); msg.appendChild(document.createTextNode(" или ")); msg.appendChild(bot);
+      msg.appendChild(document.createTextNode("."));
     };
     var close = function () { box.remove(); accountView = null; };
     box.querySelector(".chat-x").onclick = close;
